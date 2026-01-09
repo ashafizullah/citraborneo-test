@@ -20,17 +20,20 @@ const routes = [
       {
         path: 'employees',
         name: 'Employees',
-        component: () => import('../views/Employees.vue')
+        component: () => import('../views/Employees.vue'),
+        meta: { requiresAdmin: true }
       },
       {
         path: 'departments',
         name: 'Departments',
-        component: () => import('../views/Departments.vue')
+        component: () => import('../views/Departments.vue'),
+        meta: { requiresAdmin: true }
       },
       {
         path: 'positions',
         name: 'Positions',
-        component: () => import('../views/Positions.vue')
+        component: () => import('../views/Positions.vue'),
+        meta: { requiresAdmin: true }
       },
       {
         path: 'attendances',
@@ -57,6 +60,9 @@ router.beforeEach((to, from, next) => {
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next('/login')
   } else if (to.path === '/login' && authStore.isAuthenticated) {
+    next('/')
+  } else if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    // Redirect non-admin users trying to access admin-only pages
     next('/')
   } else {
     next()

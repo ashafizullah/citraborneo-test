@@ -1,6 +1,8 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+  <div class="min-h-screen flex flex-col bg-gray-100">
+    <!-- Login Form Container (Centered) -->
+    <div class="flex-1 flex items-center justify-center px-4">
+      <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
       <h1 class="text-2xl font-bold text-center text-gray-800 mb-2">Sistem HR</h1>
       <h2 class="text-lg text-center text-gray-600 mb-6">Login</h2>
 
@@ -46,15 +48,30 @@
         </button>
       </form>
 
-      <div class="mt-6 text-center text-sm text-gray-500">
-        <p>Default Admin: admin@hr.com / admin123</p>
+      <div class="mt-6 text-center text-sm text-gray-500 space-y-2">
+        <p class="text-xs text-gray-400">Klik untuk isi otomatis:</p>
+        <button
+          type="button"
+          @click="fillDemo('admin@hr.com', 'admin123')"
+          class="block w-full px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-gray-600 transition-colors"
+        >
+          Admin: admin@hr.com / admin123
+        </button>
+        <button
+          type="button"
+          @click="fillDemo('test.employee@company.com', 'password123')"
+          class="block w-full px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded text-gray-600 transition-colors"
+        >
+          Karyawan: test.employee@company.com / password123
+        </button>
+      </div>
       </div>
     </div>
 
-    <!-- Footer -->
-    <div class="absolute bottom-4 left-0 right-0 text-center text-sm text-gray-500">
+    <!-- Footer (Sticky Bottom) -->
+    <footer class="py-4 text-center text-sm text-gray-500">
       <p>&copy; {{ new Date().getFullYear() }} Adam Suchi Hafizullah. All rights reserved.</p>
-    </div>
+    </footer>
   </div>
 </template>
 
@@ -70,6 +87,11 @@ const email = ref('')
 const password = ref('')
 const loading = ref(false)
 const error = ref('')
+
+const fillDemo = (demoEmail, demoPassword) => {
+  email.value = demoEmail
+  password.value = demoPassword
+}
 
 const handleLogin = async () => {
   loading.value = true

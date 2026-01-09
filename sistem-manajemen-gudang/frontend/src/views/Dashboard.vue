@@ -1,14 +1,14 @@
 <template>
-  <div class="min-h-screen bg-gray-100">
+  <div class="min-h-screen bg-gray-100 flex flex-col">
     <!-- Header -->
     <header class="bg-white shadow">
-      <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex justify-between items-center">
-        <h1 class="text-xl font-bold text-gray-800">Sistem Manajemen Gudang</h1>
-        <div class="flex items-center gap-4">
-          <span class="text-gray-600">{{ authStore.user?.name }}</span>
+      <div class="max-w-7xl mx-auto px-4 py-3 sm:px-6 lg:px-8 flex justify-between items-center">
+        <h1 class="text-base sm:text-xl font-bold text-gray-800">Sistem Manajemen Gudang</h1>
+        <div class="flex items-center gap-2 sm:gap-4">
+          <span class="text-gray-600 text-sm hidden sm:block">{{ authStore.user?.name }}</span>
           <button
             @click="handleLogout"
-            class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 text-sm"
+            class="bg-red-500 text-white px-3 sm:px-4 py-2 rounded-lg hover:bg-red-600 text-xs sm:text-sm"
           >
             Logout
           </button>
@@ -17,7 +17,7 @@
     </header>
 
     <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
+    <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex-1">
       <!-- Actions -->
       <div class="mb-6 flex flex-wrap gap-4">
         <button
@@ -49,7 +49,7 @@
       </div>
 
       <!-- Items Table -->
-      <div v-else class="bg-white rounded-lg shadow overflow-hidden">
+      <div v-else class="bg-white rounded-lg shadow overflow-hidden overflow-x-auto">
         <table class="min-w-full divide-y divide-gray-200">
           <thead class="bg-gray-50">
             <tr>
@@ -200,8 +200,8 @@
       </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-white border-t border-gray-200 py-4 text-center text-sm text-gray-500 mt-8">
+    <!-- Footer (Sticky Bottom) -->
+    <footer class="bg-white border-t border-gray-200 py-4 text-center text-sm text-gray-500">
       <p>&copy; {{ new Date().getFullYear() }} Adam Suchi Hafizullah. All rights reserved.</p>
     </footer>
   </div>
@@ -233,8 +233,8 @@ onMounted(() => {
   itemsStore.fetchItems()
 })
 
-const handleLogout = () => {
-  authStore.logout()
+const handleLogout = async () => {
+  await authStore.logout()
   router.push('/login')
 }
 

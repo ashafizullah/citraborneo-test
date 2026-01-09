@@ -1,6 +1,8 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+  <div class="min-h-screen flex flex-col bg-gray-100">
+    <!-- Login Form Container (Centered) -->
+    <div class="flex-1 flex items-center justify-center px-4">
+      <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
       <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">
         Sistem Manajemen Gudang
       </h1>
@@ -47,12 +49,13 @@
           {{ loading ? 'Memproses...' : 'Login' }}
         </button>
       </form>
+      </div>
     </div>
 
-    <!-- Footer -->
-    <div class="absolute bottom-4 left-0 right-0 text-center text-sm text-gray-500">
+    <!-- Footer (Sticky Bottom) -->
+    <footer class="py-4 text-center text-sm text-gray-500">
       <p>&copy; {{ new Date().getFullYear() }} Adam Suchi Hafizullah. All rights reserved.</p>
-    </div>
+    </footer>
   </div>
 </template>
 
