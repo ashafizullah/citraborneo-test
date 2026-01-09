@@ -1,18 +1,18 @@
 <template>
   <div>
     <!-- Actions -->
-    <div class="mb-6 flex flex-wrap gap-4 justify-between items-center">
-      <div class="flex gap-4">
+    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+      <div class="flex flex-col gap-2 sm:flex-row sm:gap-4 w-full sm:w-auto">
         <input
           v-model="search"
           type="text"
           placeholder="Cari karyawan..."
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           @input="handleSearch"
         />
         <select
           v-model="filterDepartment"
-          class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           @change="fetchEmployees"
         >
           <option value="">Semua Departemen</option>
@@ -25,14 +25,14 @@
         <button
           v-if="authStore.isAdmin"
           @click="openAddModal"
-          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          class="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
         >
           + Tambah Karyawan
         </button>
         <button
           v-if="authStore.isAdmin"
           @click="exportCSV"
-          class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+          class="flex-1 sm:flex-none bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
         >
           Export CSV
         </button>

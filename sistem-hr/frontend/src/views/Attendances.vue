@@ -29,11 +29,11 @@
     </div>
 
     <!-- Filters -->
-    <div class="mb-6 flex flex-wrap gap-4 justify-between items-center">
-      <div class="flex gap-4">
-        <input v-model="filterStartDate" type="date" class="px-4 py-2 border border-gray-300 rounded-lg" @change="fetchAttendances" />
-        <input v-model="filterEndDate" type="date" class="px-4 py-2 border border-gray-300 rounded-lg" @change="fetchAttendances" />
-        <select v-model="filterStatus" class="px-4 py-2 border border-gray-300 rounded-lg" @change="fetchAttendances">
+    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+      <div class="flex flex-col gap-2 sm:flex-row sm:gap-4 w-full sm:w-auto">
+        <input v-model="filterStartDate" type="date" class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg" @change="fetchAttendances" />
+        <input v-model="filterEndDate" type="date" class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg" @change="fetchAttendances" />
+        <select v-model="filterStatus" class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg" @change="fetchAttendances">
           <option value="">Semua Status</option>
           <option value="present">Hadir</option>
           <option value="absent">Tidak Hadir</option>
@@ -41,10 +41,10 @@
         </select>
       </div>
       <div class="flex gap-2">
-        <button v-if="authStore.isAdmin" @click="openAddModal" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <button v-if="authStore.isAdmin" @click="openAddModal" class="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
           + Tambah Absensi
         </button>
-        <button v-if="authStore.isAdmin" @click="exportCSV" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+        <button v-if="authStore.isAdmin" @click="exportCSV" class="flex-1 sm:flex-none bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
           Export CSV
         </button>
       </div>

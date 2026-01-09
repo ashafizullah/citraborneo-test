@@ -1,9 +1,9 @@
 <template>
   <div>
     <!-- Actions -->
-    <div class="mb-6 flex flex-wrap gap-4 justify-between items-center">
-      <div class="flex gap-4">
-        <select v-model="filterStatus" class="px-4 py-2 border border-gray-300 rounded-lg" @change="fetchLeaves">
+    <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+      <div class="w-full sm:w-auto">
+        <select v-model="filterStatus" class="w-full sm:w-auto px-4 py-2 border border-gray-300 rounded-lg" @change="fetchLeaves">
           <option value="">Semua Status</option>
           <option value="pending">Menunggu</option>
           <option value="approved">Disetujui</option>
@@ -11,10 +11,10 @@
         </select>
       </div>
       <div class="flex gap-2">
-        <button @click="openAddModal" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+        <button @click="openAddModal" class="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
           + Ajukan Cuti
         </button>
-        <button v-if="authStore.isAdmin" @click="exportCSV" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+        <button v-if="authStore.isAdmin" @click="exportCSV" class="flex-1 sm:flex-none bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
           Export CSV
         </button>
       </div>
