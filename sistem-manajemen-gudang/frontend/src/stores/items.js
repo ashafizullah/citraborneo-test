@@ -8,7 +8,14 @@ export const useItemsStore = defineStore('items', {
   state: () => ({
     items: [],
     loading: false,
-    error: null
+    error: null,
+    pagination: {
+      page: 1,
+      limit: 10,
+      total: 0,
+      totalPages: 0
+    },
+    search: ''
   }),
 
   actions: {
@@ -39,18 +46,39 @@ export const useItemsStore = defineStore('items', {
       }
     },
 
-    async fetchItems() {
+    async fetchItems(page = null, search = null) {
       this.loading = true
       this.error = null
 
+      if (page !== null) this.pagination.page = page
+      if (search !== null) this.search = search
+
       try {
-        const response = await axios.get(`${API_URL}/items`)
+        const params = new URLSearchParams({
+          page: this.pagination.page,
+          limit: this.pagination.limit
+        })
+        if (this.search) params.append('search', this.search)
+
+        const response = await axios.get(`${API_URL}/items?${params}`)
         this.items = response.data.data || []
+        if (response.data.pagination) {
+          this.pagination = response.data.pagination
+        }
       } catch (error) {
         this.error = error.response?.data?.message || 'Gagal mengambil data barang'
       } finally {
         this.loading = false
       }
+    },
+
+    setPage(page) {
+      this.fetchItems(page)
+    },
+
+    setSearch(search) {
+      this.pagination.page = 1
+      this.fetchItems(1, search)
     },
 
     async syncFromExternalAPI() {

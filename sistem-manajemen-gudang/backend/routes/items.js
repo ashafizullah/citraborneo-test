@@ -2,13 +2,46 @@ const express = require('express')
 const router = express.Router()
 const { pool } = require('../db')
 
-// Get all items
+// Get all items with pagination
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM items ORDER BY id ASC')
+    const page = parseInt(req.query.page) || 1
+    const limit = parseInt(req.query.limit) || 10
+    const search = req.query.search || ''
+    const offset = (page - 1) * limit
+
+    let whereClause = ''
+    const params = []
+
+    if (search) {
+      params.push(`%${search}%`)
+      whereClause = `WHERE item_name ILIKE $${params.length}`
+    }
+
+    // Get total count
+    const countResult = await pool.query(
+      `SELECT COUNT(*) as total FROM items ${whereClause}`,
+      params
+    )
+    const total = parseInt(countResult.rows[0].total)
+    const totalPages = Math.ceil(total / limit)
+
+    // Get items with pagination
+    const dataParams = [...params, limit, offset]
+    const result = await pool.query(
+      `SELECT * FROM items ${whereClause} ORDER BY id ASC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`,
+      dataParams
+    )
+
     res.json({
       success: true,
-      data: result.rows
+      data: result.rows,
+      pagination: {
+        page,
+        limit,
+        total,
+        totalPages
+      }
     })
   } catch (error) {
     res.status(500).json({

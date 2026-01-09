@@ -19,20 +19,31 @@
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 flex-1">
       <!-- Actions -->
-      <div class="mb-6 flex flex-wrap gap-4">
-        <button
-          @click="showAddModal = true"
-          class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
-        >
-          + Tambah Barang
-        </button>
-        <button
-          @click="syncData"
-          :disabled="itemsStore.loading"
-          class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
-        >
-          Sync dari API
-        </button>
+      <div class="mb-6 flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
+        <div class="flex flex-col gap-2 sm:flex-row sm:gap-4 w-full sm:w-auto">
+          <input
+            v-model="searchQuery"
+            type="text"
+            placeholder="Cari barang..."
+            class="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            @input="handleSearch"
+          />
+        </div>
+        <div class="flex gap-2">
+          <button
+            @click="showAddModal = true"
+            class="flex-1 sm:flex-none bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+          >
+            + Tambah Barang
+          </button>
+          <button
+            @click="syncData"
+            :disabled="itemsStore.loading"
+            class="flex-1 sm:flex-none bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50"
+          >
+            Sync dari API
+          </button>
+        </div>
       </div>
 
       <!-- Alert Messages -->
@@ -79,7 +90,7 @@
             </tr>
             <tr v-for="(item, index) in itemsStore.items" :key="item.id">
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                {{ index + 1 }}
+                {{ (itemsStore.pagination.page - 1) * itemsStore.pagination.limit + index + 1 }}
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                 {{ item.item_name }}
@@ -107,6 +118,58 @@
             </tr>
           </tbody>
           </table>
+        </div>
+
+        <!-- Pagination -->
+        <div v-if="itemsStore.pagination.totalPages > 1" class="px-6 py-4 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div class="text-sm text-gray-600">
+            Menampilkan {{ (itemsStore.pagination.page - 1) * itemsStore.pagination.limit + 1 }} -
+            {{ Math.min(itemsStore.pagination.page * itemsStore.pagination.limit, itemsStore.pagination.total) }}
+            dari {{ itemsStore.pagination.total }} data
+          </div>
+          <div class="flex gap-2">
+            <button
+              @click="goToPage(1)"
+              :disabled="itemsStore.pagination.page === 1"
+              class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &laquo;
+            </button>
+            <button
+              @click="goToPage(itemsStore.pagination.page - 1)"
+              :disabled="itemsStore.pagination.page === 1"
+              class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &lsaquo;
+            </button>
+            <template v-for="page in visiblePages" :key="page">
+              <button
+                @click="goToPage(page)"
+                :class="[
+                  'px-3 py-1 border rounded',
+                  page === itemsStore.pagination.page
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'border-gray-300 hover:bg-gray-50'
+                ]"
+              >
+                {{ page }}
+              </button>
+            </template>
+            <button
+              @click="goToPage(itemsStore.pagination.page + 1)"
+              :disabled="itemsStore.pagination.page === itemsStore.pagination.totalPages"
+              class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &rsaquo;
+            </button>
+            <button
+              @click="goToPage(itemsStore.pagination.totalPages)"
+              :disabled="itemsStore.pagination.page === itemsStore.pagination.totalPages"
+              class="px-3 py-1 border border-gray-300 rounded hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              &raquo;
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -210,7 +273,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useItemsStore } from '../stores/items'
@@ -224,6 +287,8 @@ const showEditModal = ref(false)
 const showDeleteModal = ref(false)
 const selectedItem = ref(null)
 const message = ref(null)
+const searchQuery = ref('')
+let searchTimeout = null
 
 const formData = ref({
   item_name: '',
@@ -231,9 +296,44 @@ const formData = ref({
   unit: ''
 })
 
+// Computed untuk visible pages di pagination
+const visiblePages = computed(() => {
+  const current = itemsStore.pagination.page
+  const total = itemsStore.pagination.totalPages
+  const pages = []
+
+  let start = Math.max(1, current - 2)
+  let end = Math.min(total, current + 2)
+
+  // Adjust if at the start
+  if (current <= 3) {
+    end = Math.min(5, total)
+  }
+  // Adjust if at the end
+  if (current >= total - 2) {
+    start = Math.max(1, total - 4)
+  }
+
+  for (let i = start; i <= end; i++) {
+    pages.push(i)
+  }
+  return pages
+})
+
 onMounted(() => {
   itemsStore.fetchItems()
 })
+
+const handleSearch = () => {
+  clearTimeout(searchTimeout)
+  searchTimeout = setTimeout(() => {
+    itemsStore.setSearch(searchQuery.value)
+  }, 300)
+}
+
+const goToPage = (page) => {
+  itemsStore.setPage(page)
+}
 
 const handleLogout = async () => {
   await authStore.logout()
