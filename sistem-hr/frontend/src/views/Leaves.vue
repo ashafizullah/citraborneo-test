@@ -253,9 +253,10 @@ const showMessage = (text, type) => {
 }
 
 const exportCSV = () => {
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
   const params = new URLSearchParams()
   if (filterStatus.value) params.append('status', filterStatus.value)
-  const url = `http://localhost:3001/api/leaves/export/csv?${params.toString()}`
+  const url = `${API_URL}/leaves/export/csv?${params.toString()}`
   window.open(url, '_blank')
 }
 </script>

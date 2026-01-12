@@ -286,11 +286,12 @@ const showMessage = (text, type) => {
 }
 
 const exportCSV = () => {
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
   const params = new URLSearchParams()
   if (filterStartDate.value) params.append('start_date', filterStartDate.value)
   if (filterEndDate.value) params.append('end_date', filterEndDate.value)
   if (filterStatus.value) params.append('status', filterStatus.value)
-  const url = `http://localhost:3001/api/attendances/export/csv?${params.toString()}`
+  const url = `${API_URL}/attendances/export/csv?${params.toString()}`
   window.open(url, '_blank')
 }
 </script>

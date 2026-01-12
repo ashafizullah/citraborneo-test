@@ -314,9 +314,10 @@ const showMessage = (text, type) => {
 }
 
 const exportCSV = () => {
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api'
   const params = new URLSearchParams()
   if (filterDepartment.value) params.append('department_id', filterDepartment.value)
-  const url = `http://localhost:3001/api/employees/export/csv?${params.toString()}`
+  const url = `${API_URL}/employees/export/csv?${params.toString()}`
   window.open(url, '_blank')
 }
 </script>
